@@ -5,8 +5,13 @@
 goInjector (Gym Order Injector) 是一款针对大山中学体育场馆预约系统的订单数据模拟工具。它通过`油猴`（电脑端）或 `PCAPdroid mitm`（安卓端）注入 JS 代码的方式，提供了一个功能强大的可视化配置界面，让用户能够灵活地设置各项参数并自动生成订单数据。该工具的主要优势包括：
 
 1. 直观友好的配置界面，操作简单方便
-2. 基于真实网站环境运行，生成的数据更加真实可靠
+2. 基于真实网站环境运行，具有极高的模拟真实度
 3. 一种一劳永逸的方法，只要网站核心接口未发生变化，便可自动适配网站的后续更新迭代
+4. 仅校内用户可以使用且具有一定配置门槛，有效控制使用范围，防止脚本被滥用
+
+### 演示
+
+<video src="https://github.com/user-attachments/assets/813ba0b6-da39-4d1e-802e-a52d6d1bd139" controls="controls" muted="muted" style="max-height:320px; min-height: 240px"></video>
 
 ### 部署（安卓端）
 
