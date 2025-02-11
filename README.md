@@ -20,7 +20,7 @@ goInjector (Gym Order Injector) 是一款针对大山中学体育场馆预约系
 
 1. 安装抓包软件：在安卓设备上安装 `PCAPdroid` 和 `PCAPdroid mitm` 两个应用程序
 2. 配置 CA 证书：进入 `PCAPdroid` 设置界面，选择 `Mitm 设置向导` 并按提示完成证书配置
-3. 部署注入插件：启动 `PCAPdroid mitm`，在 `ADDONS` 中启用 `JS Injector`，点击设置按钮后通过右上角 `+` 添加目标网址 `https://raw.githubusercontent.com/jungheil/goInjector/main/goInject.user.js`
+3. 部署注入插件：启动 `PCAPdroid mitm`，在 `ADDONS` 中启用 `JS Injector`，点击设置按钮后通过右上角 `+` 添加目标网址 `https://raw.githubusercontent.com/jungheil/goInjector/main/goInjector.user.js`
 4. 设置解密规则：在 `PCAPdroid` 菜单中选择 `解密规则`，添加主机名 `gym.susy.edu.cn`（如遇问题可改为添加 `企业微信` 应用）
 5. 配置目标应用：在 `PCAPdroid` 中将 `企业微信` 设为抓包目标应用
 
@@ -34,14 +34,14 @@ goInjector (Gym Order Injector) 是一款针对大山中学体育场馆预约系
    * 安卓端：使用 `Firefox` 、`Edge` 等支持 `Tampermonkey` 插件的浏览器
    * IOS端：应用商店安装 `Safari` 插件 `Userscripts`
 2. 开启插件
-3. 访问插件地址：[https://raw.githubusercontent.com/jungheil/goInjector/main/goInject.user.js](https://raw.githubusercontent.com/jungheil/goInjector/main/goInject.user.js)
+3. 访问插件地址：[https://raw.githubusercontent.com/jungheil/goInjector/main/goInjector.user.js](https://raw.githubusercontent.com/jungheil/goInjector/main/goInjector.user.js)
 4. 安装插件
 
 ### 使用说明（企业微信注入）
 
 1. 启动抓包软件：同时运行 `PCAPdroid` 和 `PCAPdroid mitm`，在 `PCAPdroid` 界面点击右上角开始抓包
 2. 进入预约系统：通过企业微信工作台访问体育场馆预定系统
-3. 确保插件加载：如未检测到插件，请点击右上角三点菜单进行刷新（通常需要刷新 2 次左右）
+3. 确保插件加载：如未检测到插件，请点击右上角三点菜单进行刷新
 4. 打开配置界面：在页面左上角找到透明按钮区域（大概位于logo区域），长按约 0.8 秒后松开即可唤出配置对话框
 5. 设置订单参数：根据需求配置相关订单信息
 6. 验证注入结果：检查订单列表确认操作是否成功
@@ -62,13 +62,9 @@ goInjector (Gym Order Injector) 是一款针对大山中学体育场馆预约系
 
 2. Q: 长按左上角区域无法唤出配置界面
    
-   A: 长按位置不准确，建议调整按压位置并保持约0.8秒后松开；插件未成功加载，请确认抓包软件是否正常运行，注入脚本是否成功被下载，尝试多次刷新页面，如仍无效可重启相关软件后重试
+   A: 长按位置不准确，建议调整按压位置并保持约0.8秒后松开；插件未成功加载，请确认抓包软件是否正常运行，检查注入脚本是否成功被下载，尝试多次刷新页面，如仍无效可重启相关软件后重试
 
-3. Q: iOS设备如何使用该工具
-   
-   A: 自行探索合适的JS脚本注入方案，或使用安卓设备/PC端操作
-
-4. Q: 使用该脚本是否存在安全隐患？
+3. Q: 使用该脚本是否存在安全隐患？
    
    A: 本工具所有操作均在本地执行，不涉及服务器交互，理论上十分安全
 
