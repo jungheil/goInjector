@@ -3,7 +3,7 @@
 // @namespace    https://github.com/jungheil/goInjector
 // @license      Mulan PSL v2
 // @copyright    2025 Jungheil
-// @version      1.1.0
+// @version      1.2.1
 // @description  Inject order into Gym Booking System
 // @icon         https://www.sysu.edu.cn/favicon.ico
 // @author       Jungheil

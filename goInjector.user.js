@@ -3,7 +3,7 @@
 // @namespace    https://github.com/jungheil/goInjector
 // @license      Mulan PSL v2
 // @copyright    2025 Jungheil
-// @version      1.1.0
+// @version      1.2.1
 // @description  Inject order into Gym Booking System
 // @icon         https://www.sysu.edu.cn/favicon.ico
 // @author       Jungheil
@@ -28,54 +28,119 @@
 
 (function () {
   "use strict";
-  document.addEventListener("readystatechange", async function handler(e) {
-    if (localStorage.getItem("scientia-session-authorization")) {
-      if (document.readyState !== "loading") {
-        document.removeEventListener("readystatechange", handler);
 
-        const xhrOpen = XMLHttpRequest.prototype.open;
-        XMLHttpRequest.prototype.open = function () {
-          let venueConfig = JSON.parse(localStorage.getItem("venueConfig"));
+  let initializationAttempts = 0;
+  const maxAttempts = 3;
 
-          const xhr = this;
-          let url = new URL(arguments[1]);
-          if (
-            (url.pathname == "/api/BookingRequestVenue" &&
-              venueConfig?.isInitiator) ||
-            (url.pathname == "/api/BookingRequestVenue/Participants" &&
-              !venueConfig?.isInitiator)
-          ) {
-            const getter = Object.getOwnPropertyDescriptor(
-              XMLHttpRequest.prototype,
-              "responseText"
-            ).get;
-            Object.defineProperty(xhr, "responseText", {
-              get: () => {
-                let result = getter.call(xhr);
-                const bookingInfo = localStorage.getItem("BookingInfo");
-                if (bookingInfo) {
-                  let ret = JSON.parse(result);
-                  ret.push(JSON.parse(bookingInfo));
-                  return JSON.stringify(ret);
-                }
-                return result;
-              },
-            });
-          }
-          return xhrOpen.apply(xhr, arguments);
-        };
+  async function tryInitialize() {
+    try {
+      console.log(
+        `goInjector 开始初始化 (尝试 ${initializationAttempts + 1
+        }/${maxAttempts})`
+      );
 
-        const venueType = await getVenueType();
+      // Original XHR open override
+      const xhrOpen = XMLHttpRequest.prototype.open;
+      XMLHttpRequest.prototype.open = function () {
+        let venueConfig = JSON.parse(localStorage.getItem("venueConfig"));
 
-        await generateBookingInfo();
+        const xhr = this;
+        let url = new URL(arguments[1]);
+        if (
+          (url.pathname == "/api/BookingRequestVenue" &&
+            venueConfig?.isInitiator) ||
+          (url.pathname == "/api/BookingRequestVenue/Participants" &&
+            !venueConfig?.isInitiator)
+        ) {
+          const getter = Object.getOwnPropertyDescriptor(
+            XMLHttpRequest.prototype,
+            "responseText"
+          ).get;
+          Object.defineProperty(xhr, "responseText", {
+            get: () => {
+              let result = getter.call(xhr);
+              const bookingInfo = localStorage.getItem("BookingInfo");
+              if (bookingInfo) {
+                let ret = JSON.parse(result);
+                ret.push(JSON.parse(bookingInfo));
+                return JSON.stringify(ret);
+              }
+              return result;
+            },
+          });
+        }
+        return xhrOpen.apply(xhr, arguments);
+      };
 
-        initializeUI(venueType);
-        console.log("goInjector 初始化完成");
+      const venueType = await getVenueType();
+      await generateBookingInfo();
+      initializeUI(venueType);
+
+      console.log("goInjector 初始化完成");
+      return true;
+    } catch (error) {
+      console.error(
+        `goInjector 初始化失败 (尝试 ${initializationAttempts + 1
+        }/${maxAttempts}):`,
+        error
+      );
+      return false;
+    }
+  }
+
+  async function initializeWithRetry() {
+    console.log("goInjector 准备初始化...");
+    console.log("当前页面状态:", document.readyState);
+
+    while (initializationAttempts < maxAttempts) {
+      const success = await tryInitialize();
+      if (success) {
+        return;
       }
+      initializationAttempts++;
+      if (initializationAttempts < maxAttempts) {
+        console.log(
+          `goInjector 将在 1 秒后重试初始化 (${initializationAttempts + 1
+          }/${maxAttempts})...`
+        );
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
+    }
+    console.error(`goInjector 初始化失败，已达到最大重试次数 (${maxAttempts})`);
+  }
+
+  function startInitialization() {
+    if (localStorage.getItem("scientia-session-authorization")) {
+      // 立即尝试初始化
+      initializeWithRetry();
     } else {
-      console.log("未登录，goInject 放弃初始化");
+      console.log("未登录，goInjector 放弃初始化");
+    }
+  }
+
+  // 使用标志位防止重复初始化
+  let hasInitialized = false;
+
+  function handleInitialization() {
+    if (!hasInitialized) {
+      console.log("页面状态:", document.readyState);
+      hasInitialized = true;
+      startInitialization();
+    }
+  }
+
+  // 监听 readystatechange 事件
+  document.addEventListener("readystatechange", function handler(e) {
+    if (document.readyState !== "loading") {
+      document.removeEventListener("readystatechange", handler);
+      handleInitialization();
     }
   });
+
+  // 如果页面已经加载完成，立即开始初始化
+  if (document.readyState !== "loading") {
+    handleInitialization();
+  }
 
   function requestVenueType() {
     return new Promise((resolve, reject) => {
